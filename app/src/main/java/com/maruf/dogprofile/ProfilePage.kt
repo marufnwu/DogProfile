@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
 import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 @Composable
@@ -41,19 +42,24 @@ fun ProfilePage(){
     Card(modifier = Modifier
         .fillMaxSize()
         .padding(20.dp)) {
-        Column(
+        ConstraintLayout(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
                 .padding(10.dp)
                 .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
         ){
+            val (profileImage, nameText, countryName, statRow, actionRow) = createRefs()
             Image(painter = painterResource(id = R.drawable.dog), contentDescription = "Doggy",
                 modifier = Modifier
                     .size(size = 100.dp)
                     .clip(CircleShape)
                     .border(width = 2.dp, color = Color.Red, shape = CircleShape)
+                    .constrainAs(profileImage){
+                        top.linkTo(parent.top)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        bottom.linkTo(parent.bottom)
+                    }
                 , )
             Text(
                 text = "Doggy",
@@ -61,13 +67,26 @@ fun ProfilePage(){
                 fontFamily = FontFamily.Monospace,
                 fontSize = 26.sp,
                 //modifier = Modifier.background(color = Color.Red),
-                fontStyle = FontStyle.Normal
+                fontStyle = FontStyle.Normal,
+                modifier = Modifier.constrainAs(nameText){
+                    top.linkTo(profileImage.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
             )
-            Text(text = "Bangladesh")
+            Text(text = "Bangladesh",  modifier = Modifier.constrainAs(countryName){
+                top.linkTo(nameText.bottom)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+            })
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(16.dp).constrainAs(statRow){
+                    top.linkTo(countryName.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                },
                 horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
 
@@ -79,7 +98,11 @@ fun ProfilePage(){
             }
 
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().constrainAs(actionRow){
+                    top.linkTo(statRow.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                },
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 Button(onClick = { /*TODO*/ }) {
